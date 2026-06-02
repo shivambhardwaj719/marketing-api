@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/telepathy/projects/face-detector/backend/models/**)",
+      "Read(//home/telepathy/projects/face-detector/backend/**)"
+    ]
+  }
+}

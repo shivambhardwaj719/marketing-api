@@ -1,0 +1,138 @@
+version: "3.9"
+
+x-common: &common
+  restart: unless-stopped
+  env_file: .env
+  networks:
+    - fastfacebook
+
+services:
+  # ─── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    <<: *common
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: fastfacebook
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Redis ───────────────────────────────────────────────────────────────────
+  redis:
+    <<: *common
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── API Server ──────────────────────────────────────────────────────────────
+  api:
+    <<: *common
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/fastfacebook
+      REDIS_URL: redis://redis:6379/0
+      REDIS_CELERY_BROKER: redis://redis:6379/1
+      REDIS_CELERY_BACKEND: redis://redis:6379/2
+    volumes:
+      - .:/app
+    command: >
+      sh -c "
+        alembic upgrade head &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─── Celery Worker (Leads) ───────────────────────────────────────────────────
+  worker-leads:
+    <<: *common
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/fastfacebook
+      REDIS_URL: redis://redis:6379/0
+      REDIS_CELERY_BROKER: redis://redis:6379/1
+      REDIS_CELERY_BACKEND: redis://redis:6379/2
+    volumes:
+      - .:/app
+    command: >
+      celery -A app.workers.celery_app.celery_app worker
+      --loglevel=info -Q leads --concurrency=4
+
+  # ─── Celery Worker (Campaigns) ───────────────────────────────────────────────
+  worker-campaigns:
+    <<: *common
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/fastfacebook
+      REDIS_CELERY_BROKER: redis://redis:6379/1
+      REDIS_CELERY_BACKEND: redis://redis:6379/2
+    volumes:
+      - .:/app
+    command: >
+      celery -A app.workers.celery_app.celery_app worker
+      --loglevel=info -Q campaigns --concurrency=2
+
+  # ─── Flower (Celery Monitor) ─────────────────────────────────────────────────
+  flower:
+    <<: *common
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+    environment:
+      REDIS_CELERY_BROKER: redis://redis:6379/1
+    command: >
+      celery -A app.workers.celery_app.celery_app flower
+      --port=5555 --broker=redis://redis:6379/1
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  fastfacebook:
+    driver: bridge
