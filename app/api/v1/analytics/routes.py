@@ -26,7 +26,6 @@ async def get_dashboard(current_user: CurrentUser, db: DBSession):
     service = AnalyticsService(db)
     return await service.get_dashboard(current_user.id)
 
-
 @router.get("/leads/count", response_model=LeadCountResponse, summary="Lead count breakdown")
 async def get_leads_count(
     current_user: CurrentUser,
@@ -45,7 +44,6 @@ async def get_leads_count(
         page_id=page_id,
     )
     return await service.get_leads_count(current_user.id, filters)
-
 
 @router.get(
     "/campaigns/performance",

@@ -1,13 +1,12 @@
 from fastapi import APIRouter
-
-from app.api.v1.analytics.routes import router as analytics_router
-from app.api.v1.auth.routes import router as auth_router
-from app.api.v1.campaigns.routes import router as campaigns_router
-from app.api.v1.facebook.routes import router as facebook_router
-from app.api.v1.instagram.routes import router as instagram_router
-from app.api.v1.leads.routes import router as leads_router
-from app.api.v1.webhooks.routes import router as webhooks_router
-from app.api.v1.whatsapp.routes import router as whatsapp_router
+from .analytics.routes import router as analytics_router
+from .auth.routes import router as auth_router
+from .campaigns.routes import router as campaigns_router
+from .facebook.routes import router as facebook_router
+from .instagram.routes import router as instagram_router
+from .leads.routes import router as leads_router
+from .webhooks.routes import router as webhooks_router
+from .whatsapp.routes import router as whatsapp_router
 
 api_v1_router = APIRouter()
 
