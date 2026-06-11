@@ -1,12 +1,8 @@
 from __future__ import annotations
-
 import uuid
-from unittest.mock import AsyncMock, patch
-
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.models.ad_account import AdAccount
 from app.models.campaign import Campaign
 from app.models.facebook_account import FacebookAccount

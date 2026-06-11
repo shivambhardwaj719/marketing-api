@@ -9,7 +9,6 @@ AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 async def add_contact():
     async with AsyncSessionLocal() as session:
-        # Get first user for association
         result = await session.execute(text("SELECT id FROM users LIMIT 1"))
         user_id = result.scalar()
         

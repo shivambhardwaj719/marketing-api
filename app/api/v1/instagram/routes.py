@@ -1,10 +1,6 @@
 import uuid
-from typing import Annotated
-
-from fastapi import APIRouter, Depends, HTTPException, Path
-
+from fastapi import APIRouter, HTTPException, Path
 from app.api.deps import CurrentUser, DBSession
-from app.models.user import User
 from app.schemas.instagram import InstagramAccountResponse
 from app.services.instagram_account import InstagramService
 

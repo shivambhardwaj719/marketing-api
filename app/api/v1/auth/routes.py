@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Query
-
 from app.api.deps import CurrentUser, DBSession
 from app.core.exceptions import FacebookAuthError
 from app.schemas.auth import (

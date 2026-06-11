@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import uuid
-
 from fastapi import APIRouter, File, UploadFile
-
 from app.api.deps import CurrentUser, DBSession
 from app.schemas.facebook import (
     AdAccountResponse,

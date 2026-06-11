@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 import json
-
 import pytest
 from httpx import AsyncClient
-
 from app.core.config import settings
 
 

@@ -14,7 +14,6 @@ bearer_scheme = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    request: Request,
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)] = None,
     db: AsyncSession = Depends(get_db),
 ) -> User:

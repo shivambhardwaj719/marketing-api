@@ -1,14 +1,9 @@
 import uuid
 import logging
 from typing import Any
-
 from fastapi import APIRouter, Depends, HTTPException
-
-logger = logging.getLogger(__name__)
-from sqlalchemy.orm import Session
 from sqlalchemy import select
-
-from app.api.deps import get_current_user, get_db, DBSession
+from app.api.deps import get_current_user, DBSession
 from app.models.user import User
 from app.models.whatsapp import WhatsAppContact, WhatsAppTemplate, WhatsAppCampaign, WhatsAppCampaignContact
 from app.schemas.whatsapp import (
@@ -23,12 +18,13 @@ from app.schemas.whatsapp import (
 )
 from app.services.whatsapp import WhatsAppService
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/whatsapp", tags=["whatsapp"])
 
 @router.post("/test-send")
 async def test_send_message(
     to_number: str = "916376082733",
-    current_user: User = Depends(get_current_user),
 ) -> Any:
     service = WhatsAppService()
     try:

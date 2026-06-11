@@ -2,12 +2,9 @@ from __future__ import annotations
 
 import json
 from typing import Any
-
 from fastapi import APIRouter, BackgroundTasks, Header, HTTPException, Query, Request, Response
-
 from app.core.config import settings
 from app.core.logger import get_logger
-from app.schemas.webhook import FacebookWebhookPayload
 
 logger = get_logger(__name__)
 

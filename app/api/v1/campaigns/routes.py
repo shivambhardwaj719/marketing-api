@@ -4,9 +4,8 @@ import uuid
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
-
 from app.api.deps import CurrentUser, DBSession
-from app.schemas.base import MessageResponse, PaginatedResponse
+from app.schemas.base import PaginatedResponse
 from app.schemas.campaign import (
     AdsetResponse,
     CampaignCreate,

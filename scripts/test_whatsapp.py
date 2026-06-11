@@ -1,7 +1,6 @@
 import asyncio
 import logging
 from app.services.whatsapp import WhatsAppService
-from app.core.config import settings
 
 logging.basicConfig(level=logging.INFO)
 

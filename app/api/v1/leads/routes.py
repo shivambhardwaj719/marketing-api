@@ -3,10 +3,8 @@ from __future__ import annotations
 import asyncio
 import json
 import uuid
-
 from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
-
 from app.api.deps import CurrentUser, DBSession
 from app.schemas.base import PaginatedResponse
 from app.schemas.lead import LeadFilterParams, LeadResponse, LeadStatusUpdate
