@@ -1,15 +1,12 @@
 from __future__ import annotations
-
 import base64
 import hashlib
 import hmac
 from datetime import UTC, datetime, timedelta
 from typing import Any
-
 import bcrypt as _bcrypt
 from cryptography.fernet import Fernet, InvalidToken
 from jose import JWTError, jwt
-
 from app.core.config import settings
 from app.core.exceptions import AuthenticationError, TokenExpiredError
 from app.core.logger import get_logger

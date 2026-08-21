@@ -3,15 +3,11 @@ from __future__ import annotations
 import time
 import uuid
 from collections.abc import Callable
-
 import structlog
 from fastapi import Request, Response
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.types import ASGIApp
-
 from app.core.config import settings
 from app.core.exceptions import AppException
 from app.core.logger import get_logger
